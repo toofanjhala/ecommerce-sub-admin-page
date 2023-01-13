@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href ="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+   
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+   
+    <style>
+         body {
+         margin:auto;
+         background-color: #d2d6db;
+         
+       
+        }
+    </style>
+</head>
+
+<body >
+    
+    <div class="container" style="align-self: auto;" >
+        <h1  class="text-bg-dark">  SHARPENER BAZAR</h1>
+        <h3 class="text-bg-success"> ADMIN PAGE</h3><hr>
+        <form style="background-color: bisque;" class ="form-control" >
+        <label for="amount" id="labels"> PRODUCT PRICE </label>
+            <input type="text" id="amounttext"  placeholder=" Please Enter MRP" class="input-control" required>
+            <label for="PRODUCTNAME" id="labels"> PRODUCT NAME </label>
+            <input type="text" id="producttext"  placeholder="Enter Product Name" class="input-control" required>
+            <label for ="description" id="desp"> CATEGORY  </label>
+          <select name="category" id="category1"  >
+            <option>FOOD</option>
+            <option>SKINCARE</option>
+            <option>ELECTRONICS</option>
+            <option>CLOTHING</option>
+         </select> 
+           <span></span> <button id="btn" class="btn btn-primary">POST</button>
+
+            
+        </form>
+        <hr>
+        <ul id="list" class="list-group list-group-flush"><h5>FOOD PRODUCT</h5></ul>
+         
+         <hr>
+        <ul id="list2" class="list-group list-group-flush"><h5>SKINCARE PRODUCT</h5></ul>
+        
+        <hr>
+        <ul id="list3" class="list-group list-group-flush"><h5> ELECTRONICS PRODUCT</h5> </ul>
+         
+         <hr>
+         <ul id="list4" class="list-group list-group-flush"><h5> CLOTHING PRODUCT</h5> </ul>
+         <hr>
+    </div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+<script>
+    let button=document.getElementById("btn")
+    let price=document.getElementById("amounttext")
+    let productname=document.getElementById("producttext")
+    let category=document.getElementById("category1")
+
+   
+
+    button.addEventListener("click",function getdata(e){
+        e.preventDefault();
+        
+         let obj={price:`${price.value}`,product:`${productname.value}`,category:`${category.value}`}
+       
+         axios
+         .post('https://crudcrud.com/api/50a69ea03d274faa87414a9c2d202f65/product',obj)
+         .then((res)=>{
+                 onscreen(res.data)
+                  console.log(res.data)
+                })
+         .catch((err)=>{console.log(err)})
+       
+         price.value=""
+         productname.value=""
+         category.value=""
+    })
+
+    
+    window.addEventListener("DOMContentLoaded", () => {
+        axios
+        .get('https://crudcrud.com/api/50a69ea03d274faa87414a9c2d202f65/product')
+        .then((res)=>{
+            for(var i=0;i<res.data.length;i++){
+                onscreen(res.data[i])
+            }
+        })
+        .catch((Err)=>console.log(Err))
+        
+       
+    });
+
+
+    function onscreen(object)
+    {
+       
+        if(object.category==="FOOD"){
+        
+        let list=document.getElementById("list")
+
+        const childhtml =`<ol id="${object._id}"> ${object.price}-->${object.product}--${object.category}
+              <button class="btn btn-primary" onclick=deleteuser('${object._id}','${object.category}') >Delete</button>
+               </ol>`
+
+            list.innerHTML=list.innerHTML + childhtml;
+            }
+
+         else if(object.category==="SKINCARE"){
+        
+        let list=document.getElementById("list2")
+
+        const childhtml =`<ol id="${object._id}"> ${object.price}--${object.product}--${object.category}
+              <button class="btn btn-danger" onclick=deleteuser('${object._id}','${object.category}') >Delete</button>
+               </ol>`
+
+            list.innerHTML=list.innerHTML + childhtml;
+            }
+            else if(object.category==="ELECTRONICS"){
+        
+        let list=document.getElementById("list3")
+
+        const childhtml =`<ol id="${object._id}"> ${object.price}--${object.product}--${object.category}
+              <button class="btn btn-danger" onclick=deleteuser('${object._id}','${object.category}') >Delete</button>
+               </ol>`
+
+            list.innerHTML=list.innerHTML + childhtml;
+            }
+            else if(object.category==="CLOTHING"){
+        
+        let list=document.getElementById("list4")
+
+        const childhtml =`<ol id="${object._id}"> ${object.price}--${object.product}--${object.category}
+              <button class="btn btn-danger" onclick=deleteuser('${object._id}','${object.category}') >Delete</button>
+               </ol>`
+
+            list.innerHTML=list.innerHTML + childhtml;
+            }
+        }
+    
+    
+        function deleteuser(userid,category){
+          //   console.log(userid)
+          //   console.log(category)
+            
+        axios
+        .delete(`https://crudcrud.com/api/50a69ea03d274faa87414a9c2d202f65/product/${userid}`)
+         .then((res)=>{
+           removefromscreen(userid,category);
+       })
+       .catch(err=>console.log(err))
+       
+
+    }
+
+   function removefromscreen(userid,category){
+   //console.log(category)
+     if(category==="FOOD"){
+ const parentnode=document.getElementById('list');
+        const childnode=document.getElementById(userid);
+        if(childnode){
+        parentnode.removeChild(childnode);
+        }
+    }
+   else if(category==="SKINCARE"){
+ const parentnode=document.getElementById('list2');
+        const childnode=document.getElementById(userid);
+        if(childnode){
+        parentnode.removeChild(childnode);
+        }
+    }
+    else if(category==="ELECTRONICS"){
+ const parentnode=document.getElementById('list3');
+        const childnode=document.getElementById(userid);
+        if(childnode){
+        parentnode.removeChild(childnode);
+        }
+    }
+    else if(category==="CLOTHING"){
+ const parentnode=document.getElementById('list4');
+        const childnode=document.getElementById(userid);
+        if(childnode){
+        parentnode.removeChild(childnode);
+        }
+    }
+   }
+
+
+
+  
+
+
+</script>
+</body>
+</html>
